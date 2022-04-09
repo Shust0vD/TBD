@@ -54,3 +54,5 @@ MIN(score) AS min_score FROM student GROUP BY n_group ORDER BY n_group DESC;*/
 
 /*SELECT n_group, id as id_stud, surname, score FROM student WHERE n_group = 3081 
 ORDER BY score DESC LIMIT 1;*/
+
+ok
