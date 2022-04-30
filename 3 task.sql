@@ -14,7 +14,7 @@ WHERE st.id = sh.student_id AND hobby.id = sh.hobby_id;*/
 	hobby.name,
 	age(sh.finished_at, sh.started_at) AS term
 FROM student st, hobby, student_hobby sh
-WHERE st.id = sh.student_id AND hobby.id = sh.hobby_id 
+WHERE st.id = sh.student_id AND hobby.id = sh.hobby_id
 AND age(sh.finished_at, sh.started_at) is NOT null
 ORDER BY term DESC
 LIMIT 1;*/
@@ -68,7 +68,7 @@ WHERE (SELECT COUNT(hobby.name) FROM hobby WHERE sh.finished_at is null) >= 1
 GROUP BY st.n_group;*/
 
 --7) Найти название, риск, длительность в месяцах самого продолжительного хобби из действующих, указав номер зачетки --студента.
-/*SELECT st.id AS student_id, 
+/*SELECT st.id AS student_id,
 	hobby.name,
 	hobby.risk,
 	12*extract(year from age(current_date, sh.started_at)) AS months
@@ -126,3 +126,27 @@ WHERE sh.finished_at IS null
 GROUP BY course;*/
 
 --13) Вывести номер зачётки, фамилию и имя, дату рождения и номер курса для всех отличников, не имеющих хобби. Отсортировать данные по возрастанию в пределах курса по убыванию даты рождения.
+/*SELECT st.id as n_zach, st.surname, st.name, st.date_birth, st.n_group/1000 as course
+FROM student st
+LEFT JOIN (SELECT sh.student_id as st_id FROM student_hobby sh GROUP BY st_id
+		   HAVING COUNT(sh.started_at) = COUNT(sh.finished_at)) as shh
+ON shh.st_id = st.id
+WHERE st.score = 5
+ORDER BY course ASC, st.date_birth DESC;*/
+
+--14) Создать представление, в котором отображается вся информация о студентах, которые продолжают заниматься хобби в данный момент и занимаются им как минимум 5 лет.
+/*CREATE OR REPLACE VIEW sh_more5 AS
+SELECT st.* FROM student st
+INNER JOIN student_hobby sh
+ON st.id = sh.student_id
+WHERE sh.finished_at IS null AND current_date-sh.started_at > 1825;
+SELECT * FROM sh_more5;*/
+
+--15) Для каждого хобби вывести количество людей, которые им занимаются.
+/*SELECT h.name, COUNT(DISTINCT sh.student_id)
+FROM hobby h
+INNER JOIN student_hobby sh
+ON sh.hobby_id = h.id
+GROUP BY h.name;*/
+
+--16) Вывести ИД самого популярного хобби.
