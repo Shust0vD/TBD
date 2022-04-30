@@ -116,3 +116,13 @@ ON st1.n_group = st2.n_group
 WHERE st2.count/st1.count >= 0.6;*/
 
 --12) Для каждого курса подсчитать количество различных действующих хобби на курсе.
+/*SELECT st.n_group/1000 as course, COUNT(DISTINCT h.id)
+FROM student st
+INNER JOIN student_hobby sh
+ON sh.student_id = st.id
+INNER JOIN hobby h
+ON sh.hobby_id = h.id
+WHERE sh.finished_at IS null
+GROUP BY course;*/
+
+--13) Вывести номер зачётки, фамилию и имя, дату рождения и номер курса для всех отличников, не имеющих хобби. Отсортировать данные по возрастанию в пределах курса по убыванию даты рождения.
