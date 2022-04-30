@@ -114,3 +114,5 @@ FROM (SELECT n_group, COUNT(id) FROM student WHERE score >= 4 GROUP BY n_group) 
 INNER JOIN (SELECT n_group, COUNT(id) FROM student GROUP BY n_group) AS st2
 ON st1.n_group = st2.n_group
 WHERE st2.count/st1.count >= 0.6;*/
+
+--12) Для каждого курса подсчитать количество различных действующих хобби на курсе.
