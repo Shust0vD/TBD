@@ -14,7 +14,7 @@ WHERE st.id = sh.student_id AND hobby.id = sh.hobby_id;*/
 	hobby.name,
 	age(sh.finished_at, sh.started_at) AS term
 FROM student st, hobby, student_hobby sh
-WHERE st.id = sh.student_id AND hobby.id = sh.hobby_id 
+WHERE st.id = sh.student_id AND hobby.id = sh.hobby_id
 AND age(sh.finished_at, sh.started_at) is NOT null
 ORDER BY term DESC
 LIMIT 1;*/
@@ -68,7 +68,7 @@ WHERE (SELECT COUNT(hobby.name) FROM hobby WHERE sh.finished_at is null) >= 1
 GROUP BY st.n_group;*/
 
 --7) Найти название, риск, длительность в месяцах самого продолжительного хобби из действующих, указав номер зачетки --студента.
-/*SELECT st.id AS student_id, 
+/*SELECT st.id AS student_id,
 	hobby.name,
 	hobby.risk,
 	12*extract(year from age(current_date, sh.started_at)) AS months
