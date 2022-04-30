@@ -150,3 +150,28 @@ ON sh.hobby_id = h.id
 GROUP BY h.name;*/
 
 --16) Вывести ИД самого популярного хобби.
+/*SELECT sh.hobby_id
+FROM student_hobby sh
+GROUP BY sh.hobby_id
+ORDER BY COUNT(sh.student_id) DESC
+LIMIT 1;*/
+
+--17) Вывести всю информацию о студентах, занимающихся самым популярным хобби.
+/*SELECT st.*
+FROM student st
+INNER JOIN student_hobby sh
+ON st.id = sh.student_id
+WHERE sh.hobby_id =
+	(SELECT sh.hobby_id
+	FROM student_hobby sh
+	GROUP BY sh.hobby_id
+	ORDER BY COUNT(sh.student_id) DESC
+	LIMIT 1);*/
+
+--18) Вывести ИД 3х хобби с максимальным риском.
+/*SELECT h.id
+FROM hobby h
+ORDER BY h.risk DESC
+LIMIT 3;*/
+
+--19) Вывести 10 студентов, которые занимаются одним (или несколькими) хобби самое продолжительно время.
