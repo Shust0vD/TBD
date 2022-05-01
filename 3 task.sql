@@ -175,3 +175,118 @@ ORDER BY h.risk DESC
 LIMIT 3;*/
 
 --19) Вывести 10 студентов, которые занимаются одним (или несколькими) хобби самое продолжительно время.
+/*SELECT st.id,
+	st.name,
+	st.surname,
+	age(current_date, sh.started_at) AS term
+FROM student st
+INNER JOIN student_hobby sh
+ON st.id = sh.student_id
+WHERE sh.finished_at IS null
+ORDER BY term DESC
+LIMIT 10;*/
+
+--20) Вывести номера групп (без повторений), в которых учатся студенты из предыдущего запроса.
+/*SELECT DISTINCT prev.n_group
+FROM(SELECT st.id,
+		st.name,
+		st.surname,
+	 	st.n_group,
+		age(current_date, sh.started_at) AS term
+	FROM student st
+	INNER JOIN student_hobby sh
+	ON st.id = sh.student_id
+	WHERE sh.finished_at IS null
+	ORDER BY term DESC
+	LIMIT 10) AS prev*/
+
+--21) Создать представление, которое выводит номер зачетки, имя и фамилию студентов, отсортированных по убыванию среднего балла.
+/*CREATE OR REPLACE VIEW desc_score AS
+SELECT st.id, st.name, st.surname
+FROM student st
+ORDER BY st.score DESC;
+SELECT * FROM desc_score;*/
+
+--22) Представление: найти каждое популярное хобби на каждом курсе.
+/*CREATE OR REPLACE VIEW hobby_course AS
+SELECT DISTINCT ON (1) st.n_group/1000 AS crs, h.name
+FROM student st
+INNER JOIN student_hobby sh
+ON st.id = sh.student_id
+INNER JOIN hobby h
+ON h.id = sh.hobby_id
+GROUP BY crs, h.name
+ORDER BY crs, COUNT(h.name) DESC;
+SELECT * FROM hobby_course;*/
+
+--23) Представление: найти хобби с максимальным риском среди самых популярных хобби на 2 курсе.
+/*CREATE OR REPLACE VIEW smth AS
+SELECT st.n_group/1000 AS crs, h.name, h.risk
+FROM student st
+INNER JOIN student_hobby sh
+ON st.id = sh.student_id
+INNER JOIN hobby h
+ON h.id = sh.hobby_id
+WHERE st.n_group/1000 = 2
+GROUP BY crs, h.name, h.risk
+ORDER BY h.risk DESC
+LIMIT 1;
+SELECT * FROM smth;*/
+
+--24) Представление: для каждого курса подсчитать количество студентов на курсе и количество отличников.
+/*CREATE OR REPLACE VIEW crs_count AS
+SELECT st.n_group/1000 AS crs, COUNT(st.id) AS total,
+COUNT(st.id) FILTER (WHERE st.score = 5) AS excellent
+FROM student st
+GROUP BY crs
+ORDER BY crs ASC;
+SELECT * FROM crs_count;*/
+
+--25) Представление: самое популярное хобби среди всех студентов.
+/*CREATE OR REPLACE VIEW hobby_popular AS
+SELECT h.name, COUNT(sh.hobby_id)
+FROM student_hobby sh
+INNER JOIN hobby h
+ON h.id = sh.hobby_id
+GROUP BY h.name
+ORDER BY count DESC
+LIMIT 1;
+SELECT * FROM hobby_popular;*/
+
+--26) Создать обновляемое представление.
+/*CREATE OR REPLACE VIEW student_view AS
+SELECT * FROM student
+ORDER BY id;
+SELECT * FROM student_view;*/
+
+--27) Для каждой буквы алфавита из имени найти максимальный, средний и минимальный балл. (Т.е. среди всех студентов, чьё имя начинается на А (Алексей, Алина, Артур, Анджела) найти то, что указано в задании. Вывести на экран тех, максимальный балл которых больше 3.6
+/*SELECT substr(st.name, 1, 1) AS f_let, MAX(st.score), ROUND(AVG(st.score), 2) AS avg, MIN(st.score)
+FROM student st
+GROUP BY f_let
+HAVING MAX(st.score) > 3.6
+ORDER BY f_let;*/
+
+--28) Для каждой фамилии на курсе вывести максимальный и минимальный средний балл. (Например, в университете учатся 4 Иванова (1-2-3-4). 1-2-3 учатся на 2 курсе и имеют средний балл 4.1, 4, 3.8 соответственно, а 4 Иванов учится на 3 курсе и имеет балл 4.5. На экране должно быть следующее: 2 Иванов 4.1 3.8 3 Иванов 4.5 4.5
+/*SELECT st.n_group/1000 AS course, st.name, MAX(st.score), MIN(st.score)
+FROM student st
+GROUP BY course, st.name
+ORDER BY course;*/
+
+--29) Для каждого года рождения подсчитать количество хобби, которыми занимаются или занимались студенты.
+/*SELECT EXTRACT(year FROM st.date_birth) AS year, COUNT(DISTINCT sh.hobby_id)
+FROM student st
+INNER JOIN student_hobby sh
+ON st.id = sh.student_id
+GROUP BY year;*/
+
+--30) Для каждой буквы алфавита в имени найти максимальный и минимальный риск хобби.
+/*SELECT substr(st.name, 1, 1) AS f_let, MAX(h.risk), MIN(h.risk)
+FROM student st
+INNER JOIN student_hobby sh
+ON st.id = sh.student_id
+INNER JOIN hobby h
+ON h.id = sh.hobby_id
+GROUP BY f_let
+ORDER BY f_let;*/
+
+--31) Для каждого месяца из даты рождения вывести средний балл студентов, которые занимаются хобби с названием «Футбол»
