@@ -290,3 +290,66 @@ GROUP BY f_let
 ORDER BY f_let;*/
 
 --31) Для каждого месяца из даты рождения вывести средний балл студентов, которые занимаются хобби с названием «Футбол»
+/*SELECT EXTRACT(month FROM st.date_birth) AS month, ROUND(AVG(st.score), 2)
+FROM student st
+INNER JOIN student_hobby sh
+ON st.id = sh.student_id
+INNER JOIN hobby h
+ON h.id = sh.hobby_id
+WHERE h.name = 'Football'
+GROUP BY month
+ORDER BY month;*/
+
+--32) Вывести информацию о студентах, которые занимались или занимаются хотя бы 1 хобби в следующем формате: Имя: Иван, фамилия: Иванов, группа: 1234
+/*SELECT DISTINCT st.name, st.surname, st.n_group
+FROM student st
+INNER JOIN student_hobby sh
+ON st.id = sh.student_id;*/
+
+--33) Найдите в фамилии в каком по счёту символа встречается «ов». Если 0 (т.е. не встречается, то выведите на экран «не найдено».
+/*SELECT st.surname,
+    CASE
+        WHEN strpos(st.surname, 'ov') > 0 THEN strpos(st.surname, 'ov')::varchar
+    ELSE
+        'Not found'
+    END
+FROM student st;*/
+
+--34) Дополните фамилию справа символом # до 10 символов.
+/*SELECT rpad(st.surname, 10, '#')
+FROM student st;*/
+
+--35) При помощи функции удалите все символы # из предыдущего запроса.
+/*SELECT trim(BOTH '#' FROM rpad(st.surname, 10, '#'))
+FROM student st;*/
+
+--36) Выведите на экран сколько дней в апреле 2018 года.
+--SELECT EXTRACT(DAY FROM timestamp '2018-05-01'-timestamp '2018-04-01');
+
+--37) Выведите на экран какого числа будет ближайшая суббота.
+--SELECT current_date - cast(extract(dow from current_date) as int) + 6;
+
+--38) Выведите на экран век, а также какая сейчас неделя года и день года.
+--SELECT extract(century from current_date), extract(week from current_date), extract(doy from current_date);
+
+--39) Выведите всех студентов, которые занимались или занимаются хотя бы 1 хобби. Выведите на экран Имя, Фамилию, Названию хобби, а также надпись «занимается», если студент продолжает заниматься хобби в данный момент или «закончил», если уже не занимает.
+/*SELECT DISTINCT st.name, st.surname, h.name,
+CASE
+	WHEN sh.finished_at IS null THEN 'Doing'
+	WHEN sh.finished_at IS NOT null THEN 'Not doing'
+END
+FROM student st
+INNER JOIN student_hobby sh
+ON st.id = sh.student_id
+INNER JOIN hobby h
+ON h.id = sh.hobby_id
+ORDER BY st.name;*/
+
+--40) Для каждой группы вывести сколько студентов учится на 5,4,3,2. Использовать обычное математическое округление.
+/*SELECT st.n_group, COUNT(st.id) FILTER (WHERE ROUND(st.score) = 5) AS five,
+COUNT(st.id) FILTER (WHERE ROUND(st.score) = 4) AS four,
+COUNT(st.id) FILTER (WHERE ROUND(st.score) = 3) AS three,
+COUNT(st.id) FILTER (WHERE ROUND(st.score) = 2) AS two
+FROM student st
+GROUP BY st.n_group
+ORDER BY st.n_group;*/
