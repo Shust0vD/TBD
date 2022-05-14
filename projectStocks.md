@@ -1,6 +1,6 @@
 ## Создание таблиц
-### Таблица пользователей
-```
+### 1. Таблица пользователей
+```SQL
 CREATE TABLE users (
 	id serial PRIMARY KEY,
 	name varchar(255) NOT NULL,
