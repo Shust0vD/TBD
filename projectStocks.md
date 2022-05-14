@@ -6,18 +6,18 @@ CREATE TABLE users (
 	name varchar(255) NOT NULL,
 	email varchar(255) NOT NULL,
 	password varchar(255) NOT NULL,
-	account decimal(16,2) NOT NULL,
-	blocked bool NOT NULL DEFAULT false,
-	status varchar(255) NOT NULL DEFAULT 'client'
+	account decimal(16,2) NOT NULL, --Баланс пользователя
+	blocked bool NOT NULL DEFAULT false, --Заблокирован ли пользователь (true-заблокирован, false-не заблокирован)
+	status varchar(255) NOT NULL DEFAULT 'client' --Статус пользователя (only read, client, admin)
 );
 ```
-
+### 1. Таблица тикеров акций
 CREATE TABLE stocks (
 	id serial PRIMARY KEY,
 	ticker varchar(255) NOT NULL,
-	name varchar(255) NOT NULL,
-	industry varchar(255) NOT NULL,
-	info text
+	name varchar(255) NOT NULL, --Полное название компании
+	industry varchar(255) NOT NULL, --Отрасль компании
+	info text --Доп. информация о компании
 );
 CREATE TABLE pricePerSecond (
 	idStock int NOT NULL REFERENCES stocks(id),
