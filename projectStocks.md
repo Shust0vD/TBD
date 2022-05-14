@@ -72,3 +72,8 @@ CREATE TABLE history (
 ```
 
 ## Запросы
+### 1. Регистрация
+#### Добавление нового пользователя
+```SQL
+INSERT INTO users (name, email, password, account) VALUES ('Ivan', 'ivan27@gmail.ru', 'redlion1337', 0);
+```
