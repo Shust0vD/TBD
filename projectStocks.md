@@ -129,6 +129,73 @@ INSERT INTO history (idUser, idStock, typeOper, dateOper, quantity, amount, comm
 VALUES (1, 1, 'sale', current_timestamp, 5, 7965, 0); --Добавление информации о продаже в историю
 ```
 ### 4. Просмотр информации
+#### Просмотр истории для японских свечей по тикеру
 ```SQL
+SELECT * FROM pricePerSecond 
+WHERE idStock = (SELECT id FROM stocks WHERE ticker = 'YNDX') AND
+extract(minute FROM current_timestamp - dateAndTime) + extract(hour FROM current_timestamp - dateAndTime)*60 < 5; --5-минутные
 
+SELECT * FROM pricePerSecond 
+WHERE idStock = (SELECT id FROM stocks WHERE ticker = 'YNDX') AND
+extract(day FROM current_timestamp - dateAndTime) < 1; --Дневные
+
+SELECT * FROM pricePerSecond 
+WHERE idStock = (SELECT id FROM stocks WHERE ticker = 'YNDX') AND
+extract(day FROM current_timestamp - dateAndTime) < 7; --Недельные
+```
+#### Просмотр тикера и информации о компании, а также показатели и отчёты.
+```SQL
+SELECT st.name, st.ticker, st.industry, st.info, 
+concat(ind.marketCap, ind.marketCapUnit) AS market_cap, concat(ind.income, ind.incomeUnit) AS income,
+ind.PE, ind.PS, rep.EPS AS EPS_report, concat(rep.income, rep.incomeUnit) AS income_report
+FROM stocks st
+INNER JOIN indicators ind 
+ON st.id = ind.idStock
+INNER JOIN reports rep
+ON st.id = rep.idStock
+WHERE name = 'Яндекс';
+```
+#### Поиск компании по заданным показателям, цифрам из отчёта с пагинацией и сортировкой по атрибутам
+```SQL
+DECLARE search SCROLL CURSOR FOR
+SELECT st.ticker, st.name, st.industry, st.info
+FROM stocks st
+INNER JOIN indicators ind 
+ON st.id = ind.idStock
+INNER JOIN reports rep
+ON st.id = rep.idStock
+WHERE ind.marketCap > 5 AND ind.marketCap < 8 AND ind.marketCapUnit = 'B'
+	AND rep.income > 25 AND rep.incomeUnit = 'B'
+ORDER BY ind.marketCapUnit, ind.marketCap, rep.incomeUnit, rep.income;
+FETCH FORWARD 5 FROM search;
+```
+#### Просмотр портфеля пользователя
+```SQL
+SELECT st.ticker, uS.amount, pps.price*uS.amount AS cost
+FROM stocks st
+INNER JOIN userStock uS
+ON st.id = uS.idStock
+INNER JOIN users u
+ON u.id = uS.idUser
+INNER JOIN pricePerSecond pps
+ON st.id = pps.idStock
+WHERE u.id = 1 AND pps.dateAndTime = (SELECT MAX(dateAndTime) FROM pricePerSecond);
+```
+#### Просмотр своих сделок (поиск по конкретному тикеру, по дате)
+```SQL
+SELECT s.ticker, h.typeOper, h.dateOper, h.amount, h.quantity, h.commission
+FROM history h
+INNER JOIN users u
+ON u.id = h.idUser
+INNER JOIN stocks s
+ON s.id = h.idStock
+WHERE u.id = 1 AND s.ticker = 'YNDX'; --Поиск по тикеру
+
+SELECT s.ticker, h.typeOper, h.dateOper, h.amount, h.quantity, h.commission
+FROM history h
+INNER JOIN users u
+ON u.id = h.idUser
+INNER JOIN stocks s
+ON s.id = h.idStock
+WHERE u.id = 1 AND dateOper >= '2022-05-01' AND dateOper <= '2022-05-31'; --Поиск по дате
 ```
