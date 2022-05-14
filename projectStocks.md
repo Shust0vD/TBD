@@ -115,9 +115,20 @@ UPDATE userStock SET amount = amount + 5
 WHERE idUser = 1 AND idStock = (SELECT id FROM stocks WHERE ticker = 'YNDX'); --Либо обновление, если такая запись уже была
 
 INSERT INTO history (idUser, idStock, typeOper, dateOper, quantity, amount, commission)
-VALUES (1, 1, 'purchase', current_timestamp, 5, 7965, 23.895); --Добавление информации об операции в историю
+VALUES (1, 1, 'purchase', current_timestamp, 5, 7965, 23.895); --Добавление информации о покупке в историю
 ```
 #### Продажа
+```SQL
+SELECT amount FROM userStock WHERE idUser = 1 AND idStock = 1; --Проверка, хватает ли акций у пользователя
+
+UPDATE userStock SET amount = amount - 5 WHERE idUser = 1 AND idStock = 1;  --Уменьшение количества акций в портфеле пользователя
+
+UPDATE users SET account = account + 7965 WHERE id = 1; --Пополнение баланса пользователя
+
+INSERT INTO history (idUser, idStock, typeOper, dateOper, quantity, amount, commission)
+VALUES (1, 1, 'sale', current_timestamp, 5, 7965, 0); --Добавление информации о продаже в историю
+```
+### 4. Просмотр информации
 ```SQL
 
 ```
