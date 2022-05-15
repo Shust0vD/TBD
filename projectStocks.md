@@ -153,7 +153,7 @@ INNER JOIN indicators ind
 ON st.id = ind.idStock
 INNER JOIN reports rep
 ON st.id = rep.idStock
-WHERE name = 'Яндекс';
+WHERE st.name = 'Яндекс';
 ```
 #### Поиск компании по заданным показателям, цифрам из отчёта с пагинацией и сортировкой по атрибутам
 ```SQL
